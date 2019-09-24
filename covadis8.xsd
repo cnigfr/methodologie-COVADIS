@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 rel. 2 sp1 (x64) (http://www.altova.com) by Louis AUDISIO (CERTU LYON) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gab="http://COVADIS/fichier-de-regles" targetNamespace="http://COVADIS/fichier-de-regles" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="standard">
+		<xs:annotation>
+			<xs:documentation>Schéma des règles d'implémentation des modèles COVADIS</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="nom" type="xs:string"/>
+				<xs:element name="versionRegle" type="xs:string"/>
+				<xs:element name="dateRegle" type="xs:date" default="2013-01-01"/>
+				<xs:element name="lien" type="gab:Lien" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="tables">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="table" type="gab:Table" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="typesEnumeres">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="typeEnumere" type="gab:typeEnumere" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="typeEnumere">
+		<xs:annotation>
+			<xs:documentation>Table des types énumérés</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="itemTypeEnumere" type="gab:itemTypeEnumere" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="nom" type="xs:string" use="required"/>
+		<xs:attribute name="definition" type="xs:string" use="required"/>
+		<xs:attribute name="longueurCode" type="xs:string" use="required"/>
+		<xs:attribute name="longueurLibelle" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="itemTypeEnumere">
+		<xs:annotation>
+			<xs:documentation>Item d'un type énuméré code / libellé / définition</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="libelle" type="xs:string" use="required"/>
+		<xs:attribute name="definition" type="xs:string" use="required"/>
+		<xs:attribute name="code" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Table">
+		<xs:annotation>
+			<xs:documentation>Table de données  COVADIS</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="classement" type="gab:Classement" maxOccurs="unbounded"/>
+			<xs:element name="champ" type="gab:Champ" maxOccurs="unbounded"/>
+			<xs:element name="lien" type="gab:Lien" minOccurs="0" maxOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="obligatoire" type="xs:boolean" default="true"/>
+		<xs:attribute name="nomRegex" use="required"/>
+		<xs:attribute name="nom" type="xs:string" use="required"/>
+		<xs:attribute name="geometrie" type="gab:typeGeometrie" use="required"/>
+		<xs:attribute name="ficheMetadonnees" use="required"/>
+		<xs:attribute name="definition" type="xs:string" use="required"/>
+		<xs:attribute name="extension" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="Classement">
+		<xs:attribute name="type" type="xs:string" default="COVADIS"/>
+		<xs:attribute name="niveau1" type="xs:string" use="required"/>
+		<xs:attribute name="niveau2" type="xs:string" use="required"/>
+		<xs:attribute name="niveau3" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="Champ">
+		<xs:annotation>
+			<xs:documentation>Champ d'une table de données COVADIS</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="cleEtrangere" type="gab:CleEtrangere" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="validationPattern" type="gab:ValidationPattern" minOccurs="0"/>
+				<xs:element name="plageValeur" type="gab:PlageValeur" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="nomTypeEnumere" type="xs:string" minOccurs="0"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="valeurNulleInterdite" type="xs:boolean" default="false"/>
+		<xs:attribute name="typeInformatique" type="gab:typeInformatiqueCovadis" use="required"/>
+		<xs:attribute name="nom" type="xs:string" use="required"/>
+		<xs:attribute name="longueur" type="xs:integer"/>
+		<xs:attribute name="definition" type="xs:string" use="required"/>
+		<xs:attribute name="clePrimaire" type="xs:boolean" use="optional" default="false"/>
+	</xs:complexType>
+	<xs:complexType name="CleEtrangere">
+		<xs:annotation>
+			<xs:documentation>Référence externe vers une autre table</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="nomTable" type="xs:string"/>
+			<xs:element name="nomChamp" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="nom" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ValidationPattern">
+		<xs:annotation>
+			<xs:documentation>Règle de validation d'un champ</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="definition" type="xs:string"/>
+			<xs:element name="regle" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PlageValeur">
+		<xs:annotation>
+			<xs:documentation>Plage de valeur que doit vérifier un attribut de type entier ou flottant </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="mini" type="xs:float" minOccurs="0"/>
+			<xs:element name="maxi" type="xs:float" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="typeInformatiqueCovadis">
+		<xs:annotation>
+			<xs:documentation>Type informatique COVADIS (entier / flottant / booleen / chaine / date )</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="chaine"/>
+			<xs:enumeration value="entier"/>
+			<xs:enumeration value="flottant"/>
+			<xs:enumeration value="booleen"/>
+			<xs:enumeration value="date"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="typeGeometrie">
+		<xs:annotation>
+			<xs:documentation>Type de géométrie possible (point / ligne / surface / multiple / sans)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="P"/>
+			<xs:enumeration value="L"/>
+			<xs:enumeration value="S"/>
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="N"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Lien" mixed="true">
+		<xs:attribute name="type" type="xs:string"/>
+	</xs:complexType>
+	<xs:element name="listeStandard">
+		<xs:annotation>
+			<xs:documentation>Liste des standards validés</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="gabarit" type="gab:Gabarit" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Gabarit">
+		<xs:sequence>
+			<xs:element name="nom" type="xs:string"/>
+			<xs:element name="dateValidation" type="xs:date"/>
+			<xs:element name="regles" type="xs:string" minOccurs="0"/>
+			<xs:element name="lien" type="gab:Lien" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+</xs:schema>
